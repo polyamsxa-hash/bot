@@ -369,51 +369,51 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ======================
 
 # Исправленный вариант для aiogram версии 3.x
-@dp.message(commands=["start"])  # Вместо @dp.message_handler
+@dp.message(Command("start"))  # Используем фильтр Command вместо передачи аргумента commands
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
 
 # Возражения / мотивация / конкуренты / сомнения
-@dp.message_handler(lambda message: message.text == "🎯 Для настроения и мотивации")
+@dp.message(Text("🎯 Для настроения и мотивации"))  # Используем Text фильтр для текста
 async def send_motivation(message: types.Message):
     phrase = random.choice(phrases)
     await message.answer(phrase)
 
-@dp.message_handler(lambda message: message.text == "🏢 Информация о конкурентах")
+@dp.message(Text("🏢 Информация о конкурентах"))
 async def send_competitors(message: types.Message):
     await message.answer("Выберите город:", reply_markup=competitors_keyboard)
 
-@dp.message_handler(lambda message: message.text == "🧠 Выявление сомнений")
+@dp.message(Text("🧠 Выявление сомнений"))
 async def send_doubts(message: types.Message):
     await message.answer(DOUT_TEXT, reply_markup=doubt_keyboard)
 
-@dp.message_handler(lambda message: message.text == "⬅️ Назад в меню")
+@dp.message(Text("⬅️ Назад в меню"))
 async def back_to_main(message: types.Message):
     await message.answer("Вы вернулись в главное меню.", reply_markup=main_keyboard)
 
 # Обработка сомнений
-@dp.message_handler(lambda message: message.text == "💸 Дорого / Сравниваю")
+@dp.message(Text("💸 Дорого / Сравниваю"))
 async def handle_expensive(message: types.Message):
     await message.answer(DORO_TEXT, reply_markup=back_doubt_keyboard)
 
-@dp.message_handler(lambda message: message.text == "📱 Еще выбираю")
+@dp.message(Text("📱 Еще выбираю"))
 async def handle_choose(message: types.Message):
     await message.answer(CHOOSE_TEXT, reply_markup=back_doubt_keyboard)
 
-@dp.message_handler(lambda message: message.text == "⏳ Я откладываю покупку")
+@dp.message(Text("⏳ Я откладываю покупку"))
 async def handle_delay(message: types.Message):
     await message.answer(DELAY_TEXT, reply_markup=back_doubt_keyboard)
 
-@dp.message_handler(lambda message: message.text == "💳 Не хочу вносить предоплату")
+@dp.message(Text("💳 Не хочу вносить предоплату"))
 async def handle_prepay(message: types.Message):
     await message.answer(PREPAY_TEXT, reply_markup=back_doubt_keyboard)
 
 # Обработка городов
-@dp.message_handler(lambda message: message.text == "📍 Саратов")
+@dp.message(Text("📍 Саратов"))
 async def handle_saratov(message: types.Message):
     await message.answer("Информация о конкурентах в Саратове.", reply_markup=back_competitors_keyboard)
 
-@dp.message_handler(lambda message: message.text == "📍 Волгоград")
+@dp.message(Text("📍 Волгоград"))
 async def handle_volgograd(message: types.Message):
     await message.answer("Информация о конкурентах в Волгограде.", reply_markup=back_competitors_keyboard)
 
