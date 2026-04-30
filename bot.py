@@ -395,6 +395,60 @@ async def handler(message: types.Message):
 
     text = message.text.lower()
 
+    if "назад в меню" in text:
+        await message.answer("Главное меню 👇", reply_markup=main_keyboard)
+        return
+
+    if "назад к конкурентам" in text:
+        await message.answer("Выберите город 👇", reply_markup=competitors_keyboard)
+        return
+
+    if "назад к сомнениям" in text:
+        await message.answer("Выберите категорию 👇", reply_markup=doubt_keyboard)
+        return
+
+    if "мотива" in text:
+        await message.answer(random.choice(phrases))
+        return
+
+    if "конкур" in text:
+        await message.answer("Выберите город 👇", reply_markup=competitors_keyboard)
+        return
+
+    if "саратов" in text:
+        await message.answer(SARATOV, reply_markup=back_competitors_keyboard)
+        return
+
+    if "волгоград" in text:
+        await message.answer(VOLGOGRAD, reply_markup=back_competitors_keyboard)
+        return
+
+    if "сомнен" in text:
+        await message.answer(DOUT_TEXT, reply_markup=back_doubt_keyboard)
+        return
+
+    if "дорого" in text:
+        await message.answer(DORO_TEXT)
+        await message.answer(DORO_CLOSE, reply_markup=back_main_keyboard)
+        return
+
+    if "выбираю" in text:
+        await message.answer(CHOOSE_TEXT)
+        await message.answer(CHOOSE_CLOSE, reply_markup=back_main_keyboard)
+        return
+
+    if "откладываю" in text:
+        await message.answer(DELAY_TEXT)
+        await message.answer(DELAY_CLOSE, reply_markup=back_main_keyboard)
+        return
+
+    if "предоплат" in text:
+        await message.answer(PREPAY_TEXT)
+        await message.answer(PREPAY_CLOSE, reply_markup=back_main_keyboard)
+        return
+
+    await message.answer("Выбери кнопку 👇", reply_markup=main_keyboard)
+
     # ======================
     # НАЗАД (В САМОМ НАЧАЛЕ)
     # ======================
