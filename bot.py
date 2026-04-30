@@ -395,12 +395,34 @@ async def handler(message: types.Message):
 
     text = message.text.lower()
 
+    # ======================
+    # НАЗАД (В САМОМ НАЧАЛЕ)
+    # ======================
+
+    if "назад в меню" in text:
+        await message.answer("Главное меню 👇", reply_markup=main_keyboard)
+        return
+
+    if "назад к конкурентам" in text:
+        await message.answer("Выберите город 👇", reply_markup=competitors_keyboard)
+        return
+
+    if "назад к сомнениям" in text:
+        await message.answer("Выберите категорию 👇", reply_markup=doubt_keyboard)
+        return
+
+    # ======================
     # МОТИВАЦИЯ
+    # ======================
+
     if "мотива" in text:
         await message.answer(random.choice(phrases))
         return
 
+    # ======================
     # КОНКУРЕНТЫ
+    # ======================
+
     if "конкур" in text:
         await message.answer("Выберите город 👇", reply_markup=competitors_keyboard)
         return
@@ -413,12 +435,17 @@ async def handler(message: types.Message):
         await message.answer(VOLGOGRAD)
         return
 
+    # ======================
     # СОМНЕНИЯ
+    # ======================
+
     if "сомнен" in text:
         await message.answer(DOUT_TEXT, reply_markup=doubt_keyboard)
         return
 
+    # ======================
     # КАТЕГОРИИ
+    # ======================
 
     if "дорого" in text:
         await message.answer(DORO_TEXT)
@@ -439,19 +466,7 @@ async def handler(message: types.Message):
         await message.answer(PREPAY_TEXT)
         await message.answer(PREPAY_CLOSE, reply_markup=kb_prepaid)
         return
-if "назад в меню" in text:
-    await message.answer("Главное меню 👇", reply_markup=main_keyboard)
-    return
 
-elif "мотива" in text:
-    ...
-
-elif "конкур" in text:
-    ...
-
-else:
-    await message.answer("Выбери кнопку 👇", reply_markup=main_keyboard)
-    
     await message.answer("Выбери кнопку 👇", reply_markup=main_keyboard)
 
 # ======================
