@@ -1,6 +1,8 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.utils import executor
 import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import Message
+from aiogram import F
+from aiogram import Router
 
 API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Укажите ваш токен
 
@@ -10,14 +12,20 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
+router = Router()
+
 # Обработчик команды "/start"
-@dp.message_handler(commands=['start'])
-async def cmd_start(message: types.Message):
+@router.message(F.text == "/start")
+async def cmd_start(message: Message):
     await message.answer("Привет! Это мой бот! 🥳")
-    await message.answer("Текст с <b>HTML</b> форматированием", parse_mode="HTML")  # пример с HTML
+
+# Запуск бота
+async def main():
+    await dp.start_polling(router)
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    import asyncio
+    asyncio.run(main())
 
 # ======================
 # ГЛАВНОЕ МЕНЮ
