@@ -422,6 +422,9 @@ async def handle_volgograd(message: types.Message):
 # ЗАПУСК БОТА
 # ======================
 
+async def main():
+    print("Бот запущен")
+    await dp.start_polling(bot)
+
 if __name__ == "__main__":
-    from aiogram import executor
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
