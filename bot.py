@@ -1,15 +1,14 @@
 from aiogram import Bot, Dispatcher, types
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.utils import executor
 import logging
 
 API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Укажите ваш токен
 
+# Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
-dp.middleware.setup(LoggingMiddleware())
 
 # Обработчик команды "/start"
 @dp.message_handler(commands=['start'])
