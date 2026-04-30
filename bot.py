@@ -368,10 +368,10 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ХЕНДЛЕРЫ
 # ======================
 
-@dp.message_handler(commands=["start"])
+# Исправленный вариант для aiogram версии 3.x
+@dp.message(commands=["start"])  # Вместо @dp.message_handler
 async def cmd_start(message: types.Message):
-    await message.answer(
-        "Привет! Я ваш личный ассистент. Чем могу помочь?", reply_markup=main_keyboard
+    await message.answer("Привет! Это мой бот! 🥳")
     )
 
 # Возражения / мотивация / конкуренты / сомнения
