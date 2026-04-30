@@ -372,7 +372,6 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 @dp.message(commands=["start"])  # Вместо @dp.message_handler
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
-    )
 
 # Возражения / мотивация / конкуренты / сомнения
 @dp.message_handler(lambda message: message.text == "🎯 Для настроения и мотивации")
