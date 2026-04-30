@@ -1,19 +1,25 @@
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import ParseMode
+from aiogram.contrib.middlewares.logging import LoggingMiddleware
+from aiogram.utils import executor
+import logging
 
-API_TOKEN = "8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM"  # Здесь твой токен. Укажи свой токен!
+API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Укажите ваш токен
 
-bot = Bot(token=API_TOKEN)  # Устанавливаем токен
+logging.basicConfig(level=logging.INFO)
+
+bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
+dp.middleware.setup(LoggingMiddleware())
 
-@dp.message_handler(commands=["start"])
-async def cmd_start(message: Message):
-    # Пример использования форматирования Markdown
-    await message.answer("Привет! Это мой бот! 🥳", parse_mode="Markdown")
+# Обработчик команды "/start"
+@dp.message_handler(commands=['start'])
+async def cmd_start(message: types.Message):
+    await message.answer("Привет! Это мой бот! 🥳")
+    await message.answer("Текст с <b>HTML</b> форматированием", parse_mode=ParseMode.HTML)  # пример с HTML
 
 if __name__ == '__main__':
-    # Запуск бота через диспетчер
-    dp.start_polling()
+    executor.start_polling(dp, skip_updates=True)
 
 # ======================
 # ГЛАВНОЕ МЕНЮ
