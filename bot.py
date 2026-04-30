@@ -14,10 +14,11 @@ async def ai_handler(message: types.Message):
         import urllib.parse
         text = urllib.parse.quote(message.text)
 
-        url = f"https://text.pollinations.ai/{text}"
-        r = requests.get(url)
+        url = f"https://api.qewertyy.dev/chatgpt?prompt={text}"
+r = requests.get(url)
 
-        await message.answer(r.text)
+data = r.json()
+await message.answer(data["response"])
 
     except Exception as e:
         print("❌ ОШИБКА:", e)
