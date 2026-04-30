@@ -390,9 +390,8 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ЛОГИКА
 # ======================
 
-    @dp.message()
+@dp.message()  # Обратите внимание, что отступов перед этой строкой не должно быть
 async def handler(message: types.Message):
-
     text = message.text.lower()
 
     if "назад в меню" in text:
