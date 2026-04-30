@@ -1,9 +1,9 @@
 from aiogram import Bot, Dispatcher, types
-from aiogram.utils.executor import start_webhook
+from aiogram.types import ParseMode
 import logging
 import os
 
-API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Замените на свой токен'  # Замените на свой токен
+API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Замените на свой токен
 
 WEBHOOK_HOST = 'https://your.domain.com'  # Ваш публичный домен или IP-адрес
 WEBHOOK_PATH = '/webhook'
@@ -16,14 +16,14 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
 # Обработчик команды "/start"
-@dp.message_handler(commands=["start"])
+@dp.message(commands=["start"])
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
 
-async def on_start(_):
+async def on_start():
     logging.info("Bot started!")
 
-async def on_shutdown(_):
+async def on_shutdown():
     logging.info("Bot shutting down...")
 
 if __name__ == '__main__':
@@ -33,14 +33,7 @@ if __name__ == '__main__':
     dp.loop.run_until_complete(bot.set_webhook(WEBHOOK_URL))
 
     # Настроить обработчик webhooks
-    start_webhook(
-        dispatcher=dp,
-        webhook_path=WEBHOOK_PATH,
-        on_start=on_start,
-        on_shutdown=on_shutdown,
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 3000)),
-    )
+    web.run_app(dp, host="0.0.0.0", port=int(os.environ.get("PORT", 3000)))
 
 # ======================
 # ГЛАВНОЕ МЕНЮ
