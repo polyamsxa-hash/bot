@@ -9,6 +9,7 @@ dp = Dispatcher()
 
 @dp.message()
 async def ai_handler(message: types.Message):
+    await message.answer("я работаю")
     try:
         prompt = f"""
 Ты опытный менеджер по онлайн-продажам.
