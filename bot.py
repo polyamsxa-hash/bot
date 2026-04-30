@@ -1,5 +1,4 @@
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import ParseMode
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.utils import executor
 import logging
@@ -16,7 +15,7 @@ dp.middleware.setup(LoggingMiddleware())
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
-    await message.answer("Текст с <b>HTML</b> форматированием", parse_mode=ParseMode.HTML)  # пример с HTML
+    await message.answer("Текст с <b>HTML</b> форматированием", parse_mode="HTML")  # пример с HTML
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
