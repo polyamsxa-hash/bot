@@ -1,38 +1,46 @@
+from aiogram import Bot, Dispatcher, types
+from aiogram.utils.executor import start_webhook
 import logging
-from aiogram import Bot, Dispatcher
-from aiogram.types import Message
-from aiogram import F
-from aiogram import Router
+import os
 
-API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Укажите ваш токен
+API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Замените на свой токен'  # Замените на свой токен
+
+WEBHOOK_HOST = 'https://your.domain.com'  # Ваш публичный домен или IP-адрес
+WEBHOOK_PATH = '/webhook'
+WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-# Создаем объект бота
 bot = Bot(token=API_TOKEN)
-
-# Новый способ создания диспетчера
 dp = Dispatcher()
 
-# Создаем роутер
-router = Router()
-
 # Обработчик команды "/start"
-@router.message(F.text == "/start")
-async def cmd_start(message: Message):
+@dp.message_handler(commands=["start"])
+async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
 
-# Регистрируем роутер в диспетчере
-dp.include_router(router)
+async def on_start(_):
+    logging.info("Bot started!")
 
-# Запуск бота
-async def main():
-    await dp.start_polling(bot)
+async def on_shutdown(_):
+    logging.info("Bot shutting down...")
 
 if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
+    from aiogram import web
+
+    # Регистрация webhook
+    dp.loop.run_until_complete(bot.set_webhook(WEBHOOK_URL))
+
+    # Настроить обработчик webhooks
+    start_webhook(
+        dispatcher=dp,
+        webhook_path=WEBHOOK_PATH,
+        on_start=on_start,
+        on_shutdown=on_shutdown,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 3000)),
+    )
 
 # ======================
 # ГЛАВНОЕ МЕНЮ
