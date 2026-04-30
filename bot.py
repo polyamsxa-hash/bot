@@ -1,42 +1,15 @@
-from aiogram import Bot, Dispatcher, types
-import logging
-import os
+from aiogram import Bot, Dispatcher, Router
+from aiogram.filters import Command
+from aiogram.types import Message
+import asyncio
 
-API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Замените на свой токен
+TOKEN = "8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM"
 
-WEBHOOK_HOST = 'https://your.domain.com'  # Ваш публичный домен или IP-адрес
-WEBHOOK_PATH = '/webhook'
-WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
-
-# Настройка логирования
-logging.basicConfig(level=logging.INFO)
-
-bot = Bot(token=API_TOKEN)
+bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
+# 👇 ВОТ ЭТО ОБЯЗАТЕЛЬНО ВЫШЕ ХЕНДЛЕРОВ
 router = Router()
-
-# Обработчик команды "/start"
-from aiogram.filters import Command
-
-@router.message(Command("start"))
-async def start(message: Message):
-    await message.answer("Привет")
-    
-async def on_start():
-    logging.info("Bot started!")
-
-async def on_shutdown():
-    logging.info("Bot shutting down...")
-
-if __name__ == '__main__':
-    from aiogram import web
-
-    # Регистрация webhook
-    dp.loop.run_until_complete(bot.set_webhook(WEBHOOK_URL))
-
-    # Настроить обработчик webhooks
-    web.run_app(dp, host="0.0.0.0", port=int(os.environ.get("PORT", 3000)))
 
 # ======================
 # ГЛАВНОЕ МЕНЮ
