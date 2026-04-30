@@ -4,6 +4,7 @@ import logging
 import random
 
 from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command, Text  # 👈 ВОТ СЮДА
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 logging.basicConfig(level=logging.INFO)
@@ -369,10 +370,10 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ======================
 
 # Исправленный вариант для aiogram версии 3.x
-@dp.message(Command("start"))  # Теперь используем правильный фильтр Command
+@dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
-
+    
 # Возражения / мотивация / конкуренты / сомнения
 @dp.message(Text("🎯 Для настроения и мотивации"))
 async def send_motivation(message: types.Message):
