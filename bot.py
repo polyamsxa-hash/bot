@@ -4,7 +4,7 @@ import logging
 import random
 
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command, Text  
+from aiogram.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 logging.basicConfig(level=logging.INFO)
@@ -380,9 +380,9 @@ async def send_motivation(message: types.Message):
     phrase = random.choice(phrases)
     await message.answer(phrase)
 
-@dp.message(Text("🏢 Информация о конкурентах"))
+@dp.message(lambda message: message.text == "🏢 Информация о конкурентах")
 async def send_competitors(message: types.Message):
-    await message.answer("Выберите город:", reply_markup=competitors_keyboard)
+    await message.answer("Выберите город 👇", reply_markup=competitors_keyboard)
 
 @dp.message(Text("🧠 Выявление сомнений"))
 async def send_doubts(message: types.Message):
