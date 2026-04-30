@@ -375,7 +375,7 @@ async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
     
 # Возражения / мотивация / конкуренты / сомнения
-@dp.message(Text("🎯 Для настроения и мотивации"))
+@dp.message(lambda message: message.text == "🎯 Для настроения и мотивации")
 async def send_motivation(message: types.Message):
     phrase = random.choice(phrases)
     await message.answer(phrase)
