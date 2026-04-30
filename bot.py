@@ -1,21 +1,19 @@
+from aiogram import Bot, Dispatcher
+from aiogram.types import ParseMode
+from aiogram.utils import executor
 import os
-import asyncio
-import logging
-import random
 
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+API_TOKEN = os.getenv("API_TOKEN")
 
-logging.basicConfig(level=logging.INFO)
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher(bot)
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+@dp.message_handler(commands=["start"])
+async def cmd_start(message):
+    await message.answer("Привет! Это мой бот! 🥳")
 
-if not BOT_TOKEN:
-    raise ValueError("Нет BOT_TOKEN")
-
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
+if __name__ == '__main__':
+    executor.start_polling(dp, skip_updates=True)
 
 # ======================
 # ГЛАВНОЕ МЕНЮ
