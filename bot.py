@@ -1,37 +1,45 @@
 from aiogram import Bot, Dispatcher, types
 import asyncio
-import requests
+import random
 
 BOT_TOKEN = "8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM"
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
+start_phrases = [
+    "Понимаю вас",
+    "Хороший вопрос",
+    "Да, давайте разберёмся",
+    "Конечно, помогу"
+]
+
+fallback_answers = [
+    "Давайте подберём оптимальный вариант под ваш запрос. Что для вас сейчас важнее?",
+    "Могу помочь разобраться и предложить лучший вариант. Расскажите чуть подробнее",
+    "Подскажу лучший вариант, если уточните пару моментов",
+]
+
 @dp.message()
-async def ai_handler(message: types.Message):
-    try:
-        prompt = f"""Ты менеджер по продажам. Отвечай коротко, на русском, без таблиц. Сообщение клиента: {message.text}"""
+async def handler(message: types.Message):
+    text = message.text.lower()
+    start = random.choice(start_phrases)
 
-        url = f"https://api.qewertyy.dev/chatgpt?prompt={prompt}"
-        r = requests.get(url, timeout=5)
+    # ключевые темы
+    if "цена" in text or "сколько" in text:
+        answer = f"{start}. Скажите, на какой бюджет ориентируетесь?"
 
-        answer = ""
+    elif "айфон" in text or "iphone" in text:
+        answer = f"{start}. Могу подобрать хороший вариант с быстрой работой и камерой. Что для вас важнее — цена или функции?"
 
-        try:
-            data = r.json()
-            answer = data.get("response", "")
-        except:
-            answer = ""
+    elif "наушники" in text:
+        answer = f"{start}. Есть варианты с хорошим звуком и удобством. Вам важнее звук или комфорт?"
 
-        # если API сломан (как сейчас)
-        if not answer or "<!doctype" in r.text.lower():
-            answer = "Понимаю вас, давайте подберём вариант. Скажите, что для вас важнее — цена или качество?"
+    else:
+        # универсальный умный ответ
+        answer = f"{start}. {random.choice(fallback_answers)}"
 
-        await message.answer(answer)
-
-    except Exception as e:
-        print("❌ ОШИБКА:", e)
-        await message.answer("Понимаю вас, напишите что именно ищете, помогу 🙂")
+    await message.answer(answer)
 
 async def main():
     print("Бот запущен 🤖")
