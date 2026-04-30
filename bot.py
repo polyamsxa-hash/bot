@@ -1,5 +1,5 @@
 from aiogram import Bot, Dispatcher
-from aiogram.types import ParseMode
+from aiogram.types import Message
 from aiogram.utils import executor
 import os
 
@@ -9,8 +9,9 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
 @dp.message_handler(commands=["start"])
-async def cmd_start(message):
-    await message.answer("Привет! Это мой бот! 🥳")
+async def cmd_start(message: Message):
+    # Пример использования форматирования Markdown
+    await message.answer("Привет! Это мой бот! 🥳", parse_mode="Markdown")
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
