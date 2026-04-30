@@ -1,5 +1,5 @@
 import logging
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
 from aiogram.types import Message
 from aiogram import F
 from aiogram import Router
@@ -9,9 +9,13 @@ API_TOKEN = '8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM'  # Укажите �
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
+# Создаем объект бота
 bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
 
+# Новый способ создания диспетчера
+dp = Dispatcher()
+
+# Создаем роутер
 router = Router()
 
 # Обработчик команды "/start"
@@ -19,9 +23,12 @@ router = Router()
 async def cmd_start(message: Message):
     await message.answer("Привет! Это мой бот! 🥳")
 
+# Регистрируем роутер в диспетчере
+dp.include_router(router)
+
 # Запуск бота
 async def main():
-    await dp.start_polling(router)
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
     import asyncio
