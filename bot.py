@@ -389,9 +389,11 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ======================
 # ЛОГИКА
 # ======================
-
-@dp.message()  # Обратите внимание, что отступов перед этой строкой не должно быть
-async def handler(message: types.Message):
+# ======================
+# ЛОГИКА
+# ======================
+@dp.message()  # Декоратор @dp.message() не должен иметь отступов
+async def handler(message: types.Message):  # Функция handler начинается с отступом в 4 пробела
     text = message.text.lower()
 
     if "назад в меню" in text:
