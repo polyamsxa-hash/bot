@@ -14,8 +14,21 @@ async def ai_handler(message: types.Message):
         import urllib.parse
         text = urllib.parse.quote(message.text)
 
-        url = f"https://text.pollinations.ai/{text}"
-        r = requests.get(url)
+prompt = f"""
+Ты помощник менеджера по онлайн-продажам.
+
+Твои правила:
+- Отвечай вежливо и профессионально
+- Помогай продать продукт
+- Уточняй потребности клиента
+- Предлагай варианты
+- Пиши кратко и по делу
+
+Сообщение клиента: {message.text}
+"""
+
+url = f"https://api.qewertyy.dev/chatgpt?prompt={prompt}"
+r = requests.get(url)
 
         await message.answer(r.text)
 
