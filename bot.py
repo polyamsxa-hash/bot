@@ -369,12 +369,12 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ======================
 
 # Исправленный вариант для aiogram версии 3.x
-@dp.message(Command("start"))  # Используем фильтр Command вместо передачи аргумента commands
+@dp.message(Command("start"))  # Теперь правильно используем Command фильтр
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
 
 # Возражения / мотивация / конкуренты / сомнения
-@dp.message(Text("🎯 Для настроения и мотивации"))  # Используем Text фильтр для текста
+@dp.message(Text("🎯 Для настроения и мотивации"))
 async def send_motivation(message: types.Message):
     phrase = random.choice(phrases)
     await message.answer(phrase)
