@@ -1,6 +1,5 @@
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from aiogram.utils import executor
 import os
 
 API_TOKEN = os.getenv("API_TOKEN")
@@ -14,7 +13,8 @@ async def cmd_start(message: Message):
     await message.answer("Привет! Это мой бот! 🥳", parse_mode="Markdown")
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    # Запуск бота через диспетчер
+    dp.start_polling()
 
 # ======================
 # ГЛАВНОЕ МЕНЮ
