@@ -369,7 +369,7 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ======================
 
 # Исправленный вариант для aiogram версии 3.x
-@dp.message(Command("start"))  # Теперь правильно используем Command фильтр
+@dp.message(Command("start"))  # Теперь используем правильный фильтр Command
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Это мой бот! 🥳")
 
