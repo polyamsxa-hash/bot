@@ -9,7 +9,6 @@ dp = Dispatcher()
 
 @dp.message()
 async def ai_handler(message: types.Message):
-    await message.answer("я работаю")
     try:
         prompt = f"""
 Ты опытный менеджер по онлайн-продажам.
@@ -30,10 +29,14 @@ async def ai_handler(message: types.Message):
         url = f"https://api.qewertyy.dev/chatgpt?prompt={prompt}"
         r = requests.get(url)
 
-        data = r.json()
-        answer = data.get("response", "")
+        # безопасная обработка ответа
+        try:
+            data = r.json()
+            answer = data.get("response", "")
+        except:
+            answer = r.text
 
-        # обрезаем мусор
+        # чистим мусор
         if "|" in answer:
             answer = answer.split("|")[0]
 
@@ -52,7 +55,7 @@ async def ai_handler(message: types.Message):
 
     except Exception as e:
         print("❌ ОШИБКА:", e)
-        await message.answer("Ошибка 😔")
+        await message.answer("Что-то пошло не так, попробуйте ещё раз 🙂")
 
 async def main():
     print("Бот запущен 🤖")
