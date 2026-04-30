@@ -55,6 +55,25 @@ doubt_keyboard = ReplyKeyboardMarkup(
 )
 
 # ======================
+# КНОПКИ НАЗАД
+# ======================
+
+back_main_keyboard = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text="⬅️ Назад в меню")]],
+    resize_keyboard=True
+)
+
+back_competitors_keyboard = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text="⬅️ Назад к конкурентам")]],
+    resize_keyboard=True
+)
+
+back_doubt_keyboard = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text="⬅️ Назад к сомнениям")]],
+    resize_keyboard=True
+)
+
+# ======================
 # КНОПКИ ОТРАБОТКИ
 # ======================
 
@@ -420,7 +439,19 @@ async def handler(message: types.Message):
         await message.answer(PREPAY_TEXT)
         await message.answer(PREPAY_CLOSE, reply_markup=kb_prepaid)
         return
+if "назад в меню" in text:
+    await message.answer("Главное меню 👇", reply_markup=main_keyboard)
+    return
 
+elif "мотива" in text:
+    ...
+
+elif "конкур" in text:
+    ...
+
+else:
+    await message.answer("Выбери кнопку 👇", reply_markup=main_keyboard)
+    
     await message.answer("Выбери кнопку 👇", reply_markup=main_keyboard)
 
 # ======================
