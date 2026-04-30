@@ -14,6 +14,8 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
+router = Router()
+
 # Обработчик команды "/start"
 from aiogram.filters import Command
 
