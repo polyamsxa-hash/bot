@@ -1,5 +1,5 @@
-from aiogram import Bot, Dispatcher
-await message.answer("Текст с <b>HTML</b> форматированием", parse_mode="HTML")
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import ParseMode
 
 API_TOKEN = "8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM"  # Здесь твой токен. Укажи свой токен!
 
