@@ -1,7 +1,6 @@
 from aiogram import Bot, Dispatcher, types
 import asyncio
 import requests
-import os
 
 BOT_TOKEN = "8769156866:AAE9oyETBI6HlDRboTzN4rDK6Dl2Y1GKVOU"
 
@@ -14,33 +13,16 @@ async def ai_handler(message: types.Message):
         prompt = f"""
 Ты опытный менеджер по онлайн-продажам.
 
-ТВОЯ ЦЕЛЬ:
-помочь клиенту и мягко привести его к покупке.
+ПРАВИЛА:
+- Только русский язык
+- Без таблиц, без символов, без форматирования
+- Коротко: 2-3 предложения
+- Как живой человек
+- Можно задать 1 вопрос клиенту
 
-СТРОГИЕ ПРАВИЛА:
-- Пиши только на русском языке
-- Пиши простым текстом, как в чате (без таблиц, без символов, без оформления)
-- Не используй списки, markdown, знаки |, #, *
-- Пиши коротко: 2–3 предложения
-- Не пиши лишнего и не уходи в длинные объяснения
-
-СТИЛЬ:
-- Вежливый, спокойный, уверенный
-- Как живой менеджер, а не робот
-- Можно задавать 1 уточняющий вопрос
-
-ПРОДАЖИ:
-- Выявляй потребность клиента
-- Подсказывай лучший вариант
-- Легко подталкивай к покупке (без давления)
-
-ЗАПРЕЩЕНО:
-- Делать таблицы
-- Делать длинные сравнения
-- Писать “как ИИ” или объяснять очевидное
+Задача: помочь клиенту и подвести к покупке.
 
 Сообщение клиента: {message.text}
-
 Ответ:
 """
 
@@ -50,7 +32,7 @@ async def ai_handler(message: types.Message):
         data = r.json()
         answer = data.get("response", "")
 
-        # чистим мусор
+        # обрезаем мусор
         if "|" in answer:
             answer = answer.split("|")[0]
 
@@ -60,21 +42,12 @@ async def ai_handler(message: types.Message):
         for bad in ["#", "*"]:
             answer = answer.replace(bad, "")
 
-        answer = answer.strip()
+        answer = answer.strip()[:500]
+
+        if not answer:
+            answer = "Напишите подробнее, я помогу подобрать вариант 🙂"
 
         await message.answer(answer)
-
-    except Exception as e:
-        print("❌ ОШИБКА:", e)
-        await message.answer("Ошибка 😔")
-
-async def main():
-    print("Бот запущен 🤖")
-    await dp.start_polling(bot)
-
-asyncio.run(main())
-
-        await message.answer(r.text)
 
     except Exception as e:
         print("❌ ОШИБКА:", e)
