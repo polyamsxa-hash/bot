@@ -35,7 +35,8 @@ main_keyboard = ReplyKeyboardMarkup(
 
 competitors_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="📍 Саратов"), KeyboardButton(text="📍 Волгоград")]
+        [KeyboardButton(text="📍 Саратов"), KeyboardButton(text="📍 Волгоград")],
+        [KeyboardButton(text="⬅️ Назад в меню")]
     ],
     resize_keyboard=True
 )
@@ -49,7 +50,8 @@ doubt_keyboard = ReplyKeyboardMarkup(
         [KeyboardButton(text="💸 Дорого / Сравниваю")],
         [KeyboardButton(text="📱 Еще выбираю")],
         [KeyboardButton(text="⏳ Я откладываю покупку")],
-        [KeyboardButton(text="💳 Не хочу вносить предоплату")]
+        [KeyboardButton(text="💳 Не хочу вносить предоплату")],
+        [KeyboardButton(text="⬅️ Назад в меню")]
     ],
     resize_keyboard=True
 )
@@ -70,30 +72,6 @@ back_competitors_keyboard = ReplyKeyboardMarkup(
 
 back_doubt_keyboard = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text="⬅️ Назад к сомнениям")]],
-    resize_keyboard=True
-)
-
-# ======================
-# КНОПКИ ОТРАБОТКИ
-# ======================
-
-kb_doro = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="➡️ Отработка: Дорого / Сравниваю")]],
-    resize_keyboard=True
-)
-
-kb_choose = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="➡️ Отработка: Еще выбираю")]],
-    resize_keyboard=True
-)
-
-kb_delay = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="➡️ Отработка: Я откладываю")]],
-    resize_keyboard=True
-)
-
-kb_prepaid = ReplyKeyboardMarkup(
-    keyboard=[[KeyboardButton(text="➡️ Отработка: Предоплата")]],
     resize_keyboard=True
 )
 
@@ -387,84 +365,63 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 """
 
 # ======================
-# ЛОГИКА
+# ХЕНДЛЕРЫ
 # ======================
 
-@dp.message()
-async def handler(message: types.Message):
-    text = message.text.lower()
+@dp.message_handler(commands=["start"])
+async def cmd_start(message: types.Message):
+    await message.answer(
+        "Привет! Я ваш личный ассистент. Чем могу помочь?", reply_markup=main_keyboard
+    )
 
-    # НАЗАД (если в самом начале)
-    if "назад в меню" in text:
-        await message.answer("Главное меню 👇", reply_markup=main_keyboard)
-        return
+# Возражения / мотивация / конкуренты / сомнения
+@dp.message_handler(lambda message: message.text == "🎯 Для настроения и мотивации")
+async def send_motivation(message: types.Message):
+    phrase = random.choice(phrases)
+    await message.answer(phrase)
 
-    # ======================
-    # МОТИВАЦИЯ
-    # ======================
+@dp.message_handler(lambda message: message.text == "🏢 Информация о конкурентах")
+async def send_competitors(message: types.Message):
+    await message.answer("Выберите город:", reply_markup=competitors_keyboard)
 
-    if "мотива" in text:
-        await message.answer(random.choice(phrases))
-        return
+@dp.message_handler(lambda message: message.text == "🧠 Выявление сомнений")
+async def send_doubts(message: types.Message):
+    await message.answer(DOUT_TEXT, reply_markup=doubt_keyboard)
 
-    # ======================
-    # КОНКУРЕНТЫ
-    # ======================
+@dp.message_handler(lambda message: message.text == "⬅️ Назад в меню")
+async def back_to_main(message: types.Message):
+    await message.answer("Вы вернулись в главное меню.", reply_markup=main_keyboard)
 
-    if "конкур" in text:
-        await message.answer("Выберите город 👇", reply_markup=competitors_keyboard)
-        return
+# Обработка сомнений
+@dp.message_handler(lambda message: message.text == "💸 Дорого / Сравниваю")
+async def handle_expensive(message: types.Message):
+    await message.answer(DORO_TEXT, reply_markup=back_doubt_keyboard)
 
-    if "саратов" in text:
-        await message.answer(SARATOV, reply_markup=back_competitors_keyboard)
-        return
+@dp.message_handler(lambda message: message.text == "📱 Еще выбираю")
+async def handle_choose(message: types.Message):
+    await message.answer(CHOOSE_TEXT, reply_markup=back_doubt_keyboard)
 
-    if "волгоград" in text:
-        await message.answer(VOLGOGRAD, reply_markup=back_competitors_keyboard)
-        return
+@dp.message_handler(lambda message: message.text == "⏳ Я откладываю покупку")
+async def handle_delay(message: types.Message):
+    await message.answer(DELAY_TEXT, reply_markup=back_doubt_keyboard)
 
-    # ======================
-    # СОМНЕНИЯ
-    # ======================
+@dp.message_handler(lambda message: message.text == "💳 Не хочу вносить предоплату")
+async def handle_prepay(message: types.Message):
+    await message.answer(PREPAY_TEXT, reply_markup=back_doubt_keyboard)
 
-    if "сомнен" in text:
-        await message.answer(DOUT_TEXT, reply_markup=doubt_keyboard)
-        return
+# Обработка городов
+@dp.message_handler(lambda message: message.text == "📍 Саратов")
+async def handle_saratov(message: types.Message):
+    await message.answer("Информация о конкурентах в Саратове.", reply_markup=back_competitors_keyboard)
 
-    # ======================
-    # КАТЕГОРИИ СОМНЕНИЙ
-    # ======================
+@dp.message_handler(lambda message: message.text == "📍 Волгоград")
+async def handle_volgograd(message: types.Message):
+    await message.answer("Информация о конкурентах в Волгограде.", reply_markup=back_competitors_keyboard)
 
-    if "дорого" in text:
-        await message.answer(DORO_TEXT)
-        await message.answer(DORO_CLOSE, reply_markup=back_doubt_keyboard)
-        return
+# ======================
+# ЗАПУСК БОТА
+# ======================
 
-    if "выбираю" in text:
-        await message.answer(CHOOSE_TEXT)
-        await message.answer(CHOOSE_CLOSE, reply_markup=back_doubt_keyboard)
-        return
-
-    if "откладываю" in text:
-        await message.answer(DELAY_TEXT)
-        await message.answer(DELAY_CLOSE, reply_markup=back_doubt_keyboard)
-        return
-
-    if "предоплат" in text:
-        await message.answer(PREPAY_TEXT)
-        await message.answer(PREPAY_CLOSE, reply_markup=back_doubt_keyboard)
-        return
-
-    # ======================
-    # НАЗАД К СОМНЕНИЯМ
-    # ======================
-
-    if "назад к сомнениям" in text:
-        await message.answer("Выберите категорию сомнений 👇", reply_markup=doubt_keyboard)
-        return
-
-    # ======================
-    # ВОЗВРАТ В МЕНЮ ПО УМОЛЧАНИЮ
-    # ======================
-
-    await message.answer("Выбери кнопку 👇", reply_markup=main_keyboard)
+if __name__ == "__main__":
+    from aiogram import executor
+    executor.start_polling(dp, skip_updates=True)
