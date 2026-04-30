@@ -1,73 +1,137 @@
-from aiogram import Bot, Dispatcher, types
+import os
 import asyncio
-import random
+import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.storage.memory import MemoryStorage
 
-BOT_TOKEN = "8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM"
+import google.generativeai as genai
+
+# ====================== НАСТРОЙКИ ======================
+logging.basicConfig(level=logging.INFO)
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not BOT_TOKEN or not GEMINI_API_KEY:
+    raise ValueError("BOT_TOKEN и GEMINI_API_KEY должны быть указаны в переменных окружения!")
+
+# Настройка Gemini
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.5-flash')   # или gemini-2.5-flash-lite для большего лимита
 
 bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
 
-join_phrases = [
-    "Понимаю, что важно выбрать лучший вариант",
-    "Согласен, важно принять правильное решение",
-    "Понимаю вас, это нормальная ситуация при выборе",
-    "Соглашусь, хочется не ошибиться с выбором",
-    "Понимаю, что хочется взять максимально выгодно"
-]
 
-doubt_answers = [
-    "Вас больше останавливает цена ИЛИ вы пока выбираете модель?",
-    "Вы сравниваете с другими магазинами ИЛИ ещё не определились с вариантом?",
-    "Сомнения из-за стоимости ИЛИ из-за характеристик?",
-    "Вы выбираете между моделями ИЛИ просто присматриваетесь?",
-    "Вопрос сейчас в цене ИЛИ в самом товаре?",
-    "Вы сравниваете предложения ИЛИ просто изучаете рынок?",
-    "Сомнения по товару ИЛИ по условиям покупки?",
-    "Не хватает информации ИЛИ просто хотите подумать?",
-    "Есть альтернативы ИЛИ рассматриваете только этот вариант?",
-    "Вы склоняетесь к покупке ИЛИ пока не уверены?"
-]
+class ManagerStates(StatesGroup):
+    main = State()
+    doubt_mode = State()
 
-price_answers = [
-    "Понимаю, что важно приобрести с максимальной выгодой, у нас есть трейд-ин и можно получить дополнительную скидку",
-    "Согласен, цена играет роль, у нас действует бонусная система и можно сэкономить",
-    "Понимаю вас, хочется выгодно купить, у нас есть гарантия лучшей цены",
-    "Да, цена важна, можем предложить вариант с дополнительной выгодой через акции",
-    "Соглашусь, переплачивать не хочется, у нас есть предложения с бонусами"
-]
 
-think_answers = [
-    "Понимаю, важно всё обдумать, скажите остались вопросы ИЛИ нужно время?",
-    "Согласен, лучше не спешить, есть сомнения ИЛИ просто хотите подумать?",
-    "Понимаю вас, вы выбираете между вариантами ИЛИ пока не уверены?",
-    "Да, это нормально, нужно время ИЛИ есть конкретный вопрос?",
-    "Понимаю, хотите сравнить ИЛИ уже почти определились?"
-]
+# ====================== ОБНОВЛЁННЫЙ СИСТЕМНЫЙ ПРОМПТ ======================
+SYSTEM_PROMPT = """
+Ты — опытный senior-помощник менеджера по продажам премиальной и геймерской техники.
+
+Мы продаём:
+- Apple (iPhone, MacBook, AirPods, Apple Watch, iPad)
+- Samsung (смартфоны Galaxy, Galaxy Buds, Watch)
+- PlayStation 5, игры к PS5, подписки PS Plus
+- Xbox Series X/S, Game Pass
+- Ray-Ban Meta (умные очки)
+- Dyson (Supersonic, Airwrap, пылесосы, воздухоочистители)
+- Dreame (пылесосы)
+- Бьюти-техника: фены, стайлеры, выпрямители
+- Наушники, зарядные устройства и аксессуары
+
+**Не продаём** крупную технику (телевизоры, холодильники и т.п.).
+
+Твоя задача — помогать менеджеру быстро вскрывать сомнения клиента с помощью вопросов в формате **"или — или?"**.
+
+Когда менеджер присылает сообщение клиента, ты должен:
+1. Определить настоящую причину сомнения.
+2. Предложить 3–5 естественных и сильных вопросов в формате "___ или ___?".
+3. Добавить короткую подсказку менеджеру (1-2 предложения максимум).
+
+Стиль:
+- Кратко, по делу, профессионально
+- Только русский язык
+- Вопросы должны звучать естественно, как живой менеджер
+- Избегай шаблонности, делай вариации
+
+Пример ответа:
+
+Клиент сказал: "Дорого"
+
+Ответ:
+Вот несколько вариантов вопросов:
+
+1. Сейчас вы в первую очередь сравниваете цену на этот iPhone с другими магазинами или смотрите на комплектацию и гарантию?
+2. Вопрос сейчас именно в стоимости, или вы выбираете между iPhone и Samsung Galaxy?
+3. Вы хотите взять максимально выгодно по цене или готовы рассмотреть лучшую модель с доплатой?
+
+Подсказка: После ответа клиента можно сразу сравнить trade-in или рассрочку.
+"""
+
+# ====================== ХЭНДЛЕРЫ ======================
+@dp.message(Command("start"))
+async def cmd_start(message: types.Message, state: FSMContext):
+    await message.answer(
+        "👨‍💼 ИИ-помощник менеджера по продажам техники (Apple, Samsung, PS5, Dyson и т.д.) запущен.\n\n"
+        "Используй /doubt для активации режима помощи со вскрытием сомнений."
+    )
+    await state.set_state(ManagerStates.main)
+
+
+@dp.message(Command("doubt"))
+async def start_doubt_mode(message: types.Message, state: FSMContext):
+    await message.answer(
+        "🔍 <b>ИИ-режим вскрытия сомнений активирован</b>\n\n"
+        "Просто отправляй мне сообщение клиента (или ключевые слова).\n"
+        "Я буду предлагать лучшие вопросы «или — или» и подсказки.",
+        parse_mode="HTML"
+    )
+    await state.set_state(ManagerStates.doubt_mode)
+
+
+@dp.message(ManagerStates.doubt_mode)
+async def process_doubt(message: types.Message, state: FSMContext):
+    client_text = message.text.strip()
+    
+    if not client_text:
+        await message.answer("Отправь, пожалуйста, что сказал клиент.")
+        return
+
+    try:
+        prompt = f"Клиент сказал: \"{client_text}\""
+
+        response = model.generate_content(
+            [SYSTEM_PROMPT, prompt],
+            generation_config={
+                "temperature": 0.75,
+                "max_output_tokens": 900,
+            }
+        )
+
+        await message.answer(response.text.strip())
+
+    except Exception as e:
+        logging.error(f"Ошибка Gemini: {e}")
+        await message.answer("⚠️ Ошибка при обращении к ИИ. Попробуй отправить сообщение ещё раз.")
+
 
 @dp.message()
-async def handler(message: types.Message):
-    text = message.text.lower()
-    join = random.choice(join_phrases)
+async def default_handler(message: types.Message):
+    await message.answer("Для работы с сомнениями используй команду /doubt")
 
-    if "сомн" in text:
-        selected = random.sample(doubt_answers, 5)
-        answer = f"{join}:\n\n" + "\n".join(selected)
-
-    elif "дорог" in text or "цен" in text:
-        selected = random.sample(price_answers, 3)
-        answer = "\n\n".join(selected)
-
-    elif "дума" in text:
-        selected = random.sample(think_answers, 3)
-        answer = f"{join}:\n\n" + "\n".join(selected)
-
-    else:
-        answer = "Напиши: сомнения / дорого / думаю"
-
-    await message.answer(answer)
 
 async def main():
-    print("Бот для менеджера запущен 🤖")
+    print("🚀 ИИ-помощник менеджера запущен...")
     await dp.start_polling(bot)
 
-asyncio.run(main())
+
+if __name__ == "__main__":
+    asyncio.run(main())
