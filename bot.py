@@ -15,10 +15,12 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
 # Обработчик команды "/start"
-@dp.message(commands=["start"])
-async def cmd_start(message: types.Message):
-    await message.answer("Привет! Это мой бот! 🥳")
+from aiogram.filters import Command
 
+@router.message(Command("start"))
+async def start(message: Message):
+    await message.answer("Привет")
+    
 async def on_start():
     logging.info("Bot started!")
 
