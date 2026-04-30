@@ -1,10 +1,9 @@
 from aiogram import Bot, Dispatcher
-from aiogram.types import Message
-import os
+from aiogram.types import ParseMode
 
-API_TOKEN = os.getenv("API_TOKEN")
+API_TOKEN = "8769156866:AAFJxcIEhxOrkAU6XzO6QINOLWM4u-sZ7IM"  # Здесь твой токен. Укажи свой токен!
 
-bot = Bot(token=API_TOKEN)
+bot = Bot(token=API_TOKEN)  # Устанавливаем токен
 dp = Dispatcher(bot)
 
 @dp.message_handler(commands=["start"])
