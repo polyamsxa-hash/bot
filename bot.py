@@ -27,7 +27,7 @@ main_keyboard = ReplyKeyboardMarkup(
         [KeyboardButton(text="🧠 Выявление сомнений")]
     ],
     resize_keyboard=True
-)
+)  # Это закрытие скобки для функции
 
 # ======================
 # КОНКУРЕНТЫ МЕНЮ
