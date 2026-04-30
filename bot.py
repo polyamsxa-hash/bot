@@ -389,9 +389,10 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ======================
 # ЛОГИКА
 # ======================
-@dp.message()  # Декоратор @dp.message() не должен иметь отступов
-async def handler(message: types.Message):  # Функция handler начинается с отступом в 4 пробела
-    text = message.text.lower()
+
+@dp.message()  # этот декоратор не должен иметь отступов
+async def handler(message: types.Message):  # правильно отступленную функцию начинаем с 4 пробелов
+    text = message.text.lower()  # 4 пробела перед каждой строкой внутри функции
 
     if "назад в меню" in text:
         await message.answer("Главное меню 👇", reply_markup=main_keyboard)
