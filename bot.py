@@ -4,7 +4,7 @@ import logging
 import random
 
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command, Text  # 👈 ВОТ СЮДА
+from aiogram.filters import Command, Text  
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 logging.basicConfig(level=logging.INFO)
