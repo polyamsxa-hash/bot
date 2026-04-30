@@ -390,7 +390,7 @@ VOLGOGRAD = """📍 ВОЛГОГРАД
 # ЛОГИКА
 # ======================
 
-@dp.message()
+    @dp.message()
 async def handler(message: types.Message):
 
     text = message.text.lower()
@@ -448,7 +448,6 @@ async def handler(message: types.Message):
         return
 
     await message.answer("Выбери кнопку 👇", reply_markup=main_keyboard)
-
     # ======================
     # НАЗАД (В САМОМ НАЧАЛЕ)
     # ======================
