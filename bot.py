@@ -384,37 +384,37 @@ async def send_motivation(message: types.Message):
 async def send_competitors(message: types.Message):
     await message.answer("Выберите город 👇", reply_markup=competitors_keyboard)
 
-@dp.message(Text("🧠 Выявление сомнений"))
+@dp.message(lambda message: message.text == "🧠 Выявление сомнений")
 async def send_doubts(message: types.Message):
     await message.answer(DOUT_TEXT, reply_markup=doubt_keyboard)
 
-@dp.message(Text("⬅️ Назад в меню"))
+@dp.message(lambda message: message.text == "⬅️ Назад в меню")
 async def back_to_main(message: types.Message):
     await message.answer("Вы вернулись в главное меню.", reply_markup=main_keyboard)
 
 # Обработка сомнений
-@dp.message(Text("💸 Дорого / Сравниваю"))
+@dp.message(lambda message: message.text == "💸 Дорого / Сравниваю")
 async def handle_expensive(message: types.Message):
     await message.answer(DORO_TEXT, reply_markup=back_doubt_keyboard)
 
-@dp.message(Text("📱 Еще выбираю"))
+@dp.message(lambda message: message.text == "📱 Еще выбираю")
 async def handle_choose(message: types.Message):
     await message.answer(CHOOSE_TEXT, reply_markup=back_doubt_keyboard)
 
-@dp.message(Text("⏳ Я откладываю покупку"))
+@dp.message(lambda message: message.text == "⏳ Я откладываю покупку")
 async def handle_delay(message: types.Message):
     await message.answer(DELAY_TEXT, reply_markup=back_doubt_keyboard)
 
-@dp.message(Text("💳 Не хочу вносить предоплату"))
+@dp.message(lambda message: message.text == "💳 Не хочу вносить предоплату")
 async def handle_prepay(message: types.Message):
     await message.answer(PREPAY_TEXT, reply_markup=back_doubt_keyboard)
 
 # Обработка городов
-@dp.message(Text("📍 Саратов"))
+@dp.message(lambda message: message.text == "📍 Саратов")
 async def handle_saratov(message: types.Message):
     await message.answer("Информация о конкурентах в Саратове.", reply_markup=back_competitors_keyboard)
 
-@dp.message(Text("📍 Волгоград"))
+@dp.message(lambda message: message.text == "📍 Волгоград")
 async def handle_volgograd(message: types.Message):
     await message.answer("Информация о конкурентах в Волгограде.", reply_markup=back_competitors_keyboard)
 
