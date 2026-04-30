@@ -3,7 +3,7 @@ import asyncio
 import requests
 
 import os
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = "8769156866:AAE9oyETBI6HlDRboTzN4rDK6Dl2Y1GKVOU"
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
